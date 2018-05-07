@@ -6,7 +6,7 @@
 #include "SSD1306Brzo.h" 
 // #include <ArduinoJson.h>
 // #include <FS.h>
-#include "wifi.h"
+#include "../wifi.h"
 #include "Adafruit_MQTT.h"
 #include "Adafruit_MQTT_Client.h"
 
@@ -74,8 +74,7 @@ void setup(){
   mqtt.subscribe(&outFeed);
   mqtt.subscribe(&inFeed);
   mqtt.subscribe(&humidFeed);
-  //debug
-  Serial.println(ESP.getVcc());
+
   Serial.println(ESP.getFlashChipRealSize());
 }
 
@@ -89,7 +88,7 @@ void loop(){
   if(! mqtt.ping()) {
     mqtt.disconnect();
   }
-  mainScreen();
+  mainScreen();//it could be cool and smooth if we could update screen independently, in some kind of separate thread or smthn similar
   if (timeClient.getMinutes() == 0 && timeClient.getSeconds() < 5 && !nightMode() && lastBeep != timeClient.getHours()) { //beep
     tone(15,1000);
     delay(100);
