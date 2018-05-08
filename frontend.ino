@@ -6,7 +6,7 @@
 #include "SSD1306Brzo.h" 
 // #include <ArduinoJson.h>
 // #include <FS.h>
-#include "../wifi.h"
+#include "../wifi.h" //not working :/
 #include "Adafruit_MQTT.h"
 #include "Adafruit_MQTT_Client.h"
 
@@ -17,8 +17,8 @@ bool mqttAvail;
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP);
 SSD1306Brzo display(0x3C, 4, 5); //oled display w/ address 0x3C with SDA on GPIO4 and SCL on GPIO5 //address == offset
-// Ticker dispUpd;
-// Ticker timeUpd;
+
+// Ticker dispUpd; //i tried ticker for 91 line but it crashes every time it launch
 
 WiFiClient client;
 
@@ -107,6 +107,7 @@ void loop(){
 //reset on not connected - DONE
 //check connectivity during work and do actions - DONE
 //beep hourly - DONE
+//github - oh yeahhh
 //second screen
 //reconfig wifi if not found (start webserver and AP)
 //load config
@@ -138,7 +139,7 @@ void displayStatus(int state){
   if (state == 0) {
     display.setFont(ArialMT_Plain_16);
     display.setTextAlignment(TEXT_ALIGN_CENTER);
-    display.drawString(64, 22, "WL_CONNECTED");
+    display.drawString(64, 22, "Connected!");
     
   }
   if (state == 1) {
