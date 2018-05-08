@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.7148375"
-     inkscape:cx="653.21436"
-     inkscape:cy="527.23476"
+     inkscape:zoom="0.85741875"
+     inkscape:cx="557.99796"
+     inkscape:cy="403.15866"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -201,7 +201,7 @@
            height="45.456871"
            x="610.63721"
            y="163.87068" /></flowRegion><flowPara
-         id="flowPara46">13:37:33</flowPara></flowRoot>    <path
+         id="flowPara46">14:00:00</flowPara></flowRoot>    <path
        style="fill:none;stroke:#000000;stroke-width:0.35974398px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 133.61458,166.03793 c 0,0 9.38783,-9.88897 16.55223,0.26727 7.1644,10.15624 14.32878,3.74177 14.32878,3.74177 l 9.88194,-6.81537 c 0,0 9.38781,-6.28083 0.74114,-0.4009"
        id="path54"
@@ -222,5 +222,50 @@
          x="135.63928"
          y="195.83849"
          style="stroke-width:0.26458332">ONCE PER HOUR</tspan></text>
+    <rect
+       style="fill:#ffffff;stroke:#000000;stroke-width:0.26458332"
+       id="rect10-36"
+       width="92.977005"
+       height="57.462948"
+       x="15.926025"
+       y="219.94919" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:19.9707222px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.49926811"
+       x="17.073996"
+       y="250.2438"
+       id="text29-7"><tspan
+         sodipodi:role="line"
+         x="17.073996"
+         y="250.2438"
+         style="font-size:9.87777805px;stroke-width:0.49926811"
+         id="tspan31-5">NOT CONNECTED!</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:8.74645424px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.32799202"
+       x="16.702122"
+       y="276.02414"
+       id="text3768-5"><tspan
+         sodipodi:role="line"
+         id="tspan3766-6"
+         x="16.702122"
+         y="276.02414"
+         style="stroke-width:0.32799202;font-size:4.58611111px">we will die in 10s! :0</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:25.92646408px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.97224236"
+       x="42.761948"
+       y="215.20143"
+       id="text3803-9"><tspan
+         sodipodi:role="line"
+         id="tspan3801-3"
+         x="42.761948"
+         y="215.20143"
+         style="stroke-width:0.97224236">die</tspan><tspan
+         sodipodi:role="line"
+         x="42.761948"
+         y="247.60951"
+         style="stroke-width:0.97224236"
+         id="tspan3805-6" /></text>
   </g>
 </svg>
