@@ -7,7 +7,7 @@
 #include "SSD1306Brzo.h" 
 #include <ArduinoJson.h>
 #include <FS.h>
-#include "wifi.h" //not working :/
+#include "wifi.h"
 #include "Adafruit_MQTT.h"
 #include "Adafruit_MQTT_Client.h"
 
@@ -40,12 +40,12 @@ void wifiConnect() {
     displayStatus(2);
     delay(10000);
     ESP.reset();
-  }
-  MDNS.begin("esp8266-frontend");
-  Serial.print("Connected to " + String(ssid) + "; IP address: ");
-  Serial.println(WiFi.localIP());
-  displayStatus(0);
-  
+  } else {
+    MDNS.begin("esp8266-frontend");
+    Serial.print("Connected to " + String(ssid) + "; IP address: ");
+    Serial.println(WiFi.localIP());
+    displayStatus(0);
+  }  
 }
 void setup(){
   Serial.begin(115200);
@@ -76,6 +76,7 @@ void setup(){
   mqtt.subscribe(&inFeed);
   mqtt.subscribe(&humidFeed);
   server.on("/edit", editConfig);
+  server.begin();
 }
 
 void loop(){
@@ -88,12 +89,11 @@ void loop(){
 
   mainScreen();//it could be cool and smooth if we could update screen independently, in some kind of separate thread or smthn similar
 
-  // if (timeClient.getMinutes() == 0 && timeClient.getSeconds() < 5 && !nightMode() && lastBeep != timeClient.getHours()) {
   if ((timeClient.getHours()*60 + timeClient.getMinutes() - lastBeep > beepDelay)&&(!nightMode())){ //beep every $lastBeep
     tone(15,1000);
     delay(100);
     noTone(15);
-    lastBeep = timeClient.getHours()*60 + timeClient.getMinutes();
+    lastBeep = timeClient.getHours()*60;
   }
 
   updateNtp();//update time
@@ -147,7 +147,6 @@ void editConfig(){
       if (Argument_Name == "beepDelay"){
         beepDelay = client_response.toInt();
       }
-
       if (Argument_Name == "onTime"){
         onTime = client_response.toInt();
       }
@@ -155,7 +154,10 @@ void editConfig(){
         offTime = client_response.toInt();
       }
       updateConfig();
+      server.send(200, "text/plain", "updatedConfig");
     }
+  } else {
+    server.send(200, "text/plain", "to update config, goto " + String(WiFi.localIP()) + "/edit?parameter=value");
   }
 }
 
