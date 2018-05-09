@@ -1,3 +1,40 @@
+//TODO
+//AT LEAST MAKE IT WORK (show ui and get data + ntp) - compiling - ... - WORKS!!11
+
+//debug -> release
+//remove useless serial debug - DONE
+//show wifi info on oled - DONE
+//reset on not connected - DONE
+//check connectivity during work and do actions - DONE
+//beep hourly - DONE
+//github - oh yeahhh
+
+//load config
+//webconfig (?) - in progress
+//mqtt update interval
+
+//second screen
+
+//reconfig wifi if not found (start webserver and AP)
+
+//GRAPH
+/*
+get json from server
+~12 values
+hourly values + hourly display
+if pressure lowers then weather gonna be bad
+if pressure uppers then weather gonna be good
+*/
+
+//CONFIG
+/*
+beep time
+on time
+off time
+mqtt update interval
+
+*/
+
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
@@ -95,49 +132,78 @@ void loop(){
     noTone(15);
     lastBeep = timeClient.getHours()*60;
   }
-
+  notifyScreen("test msg");
+  delay(10000);
   updateNtp();//update time
 }
 
-//TODO
-//AT LEAST MAKE IT WORK (show ui and get data + ntp) - compiling - ... - WORKS!!11
-
-//debug -> release
-//remove useless serial debug - DONE
-//show wifi info on oled - DONE
-//reset on not connected - DONE
-//check connectivity during work and do actions - DONE
-//beep hourly - DONE
-//github - oh yeahhh
-
-//load config
-//webconfig (?) - in progress
-//mqtt update interval
-
-//second screen
-
-//reconfig wifi if not found (start webserver and AP)
-
-//GRAPH
-/*
-get json from server
-~12 values
-hourly values + hourly display
-if pressure lowers then weather gonna be bad
-if pressure uppers then weather gonna be good
-*/
-
-//CONFIG
-/*
-beep time
-on time
-off time
-mqtt update interval
-
-*/
 
 
 //====================IN PROGRESS===================
+// void 
+
+void notifyScreen(String n_text) { //display func
+  display.clear();
+  
+  if (!nightMode()) { //turn off screen at night
+    //Center
+    display.setFont(ArialMT_Plain_10);
+    display.setTextAlignment(TEXT_ALIGN_CENTER);
+    display.drawString(64, 22, n_text);
+    //progress bar
+    //top left
+    display.setFont(ArialMT_Plain_10);
+    display.setTextAlignment(TEXT_ALIGN_LEFT);
+    display.drawString(0, 0, timeClient.getFormattedTime());
+    //top right
+    // display.setFont(ArialMT_Plain_10);
+    // display.setTextAlignment(TEXT_ALIGN_RIGHT);
+    // display.drawString(128, 0, "p:"+String(pressure));
+    //bottom left
+    display.setFont(ArialMT_Plain_10);
+    display.setTextAlignment(TEXT_ALIGN_LEFT);
+    display.drawString(0, 53, "192.168.100.8");
+    //bottom right
+    // display.setFont(ArialMT_Plain_10);
+    // display.setTextAlignment(TEXT_ALIGN_RIGHT);
+    // display.drawString(128, 53, "h:"+String(humid)+"%");
+    }
+
+    //beep beep!
+    tone(15,1000);
+    delay(100);
+    noTone(15);
+    delay(100);
+    tone(15,1000);
+    delay(100);
+    noTone(15);
+  
+  display.display();
+}
+
+//====================paused===================
+
+
+// void secondDisplay() {
+//   display.clear();
+//   display.setFont(ArialMT_Plain_16);
+//   display.setTextAlignment(TEXT_ALIGN_CENTER);
+//   display.drawString(0, 30, timeClient.getFormattedTime());
+  
+//   display.drawRect(0,18,128,53); //frame
+// /*
+// 128/12=10px
+// 128x32 resolution
+// 32-19=13px for graph 
+// */
+//   int x = 0;
+//   for (int i=0;i<12;++i){
+//     display.drawLine(x+i*10, y[x], x+i*10+10, y[x]);
+//   }
+
+// }
+
+//===================WELL DONE=======================
 void editConfig(){
   if (server.args() > 0 ) { 
     for ( uint8_t i = 0; i < server.args(); i++ ){
@@ -160,7 +226,6 @@ void editConfig(){
     server.send(200, "text/plain", "to update config, goto " + String(WiFi.localIP()) + "/edit?parameter=value");
   }
 }
-
 bool updateConfig() {
   StaticJsonBuffer<200> jsonBuffer;
   JsonObject& json = jsonBuffer.createObject();
@@ -177,7 +242,6 @@ bool updateConfig() {
   return true;
 
 }
-
 bool readConfig() {
   File configFile = SPIFFS.open("/config.json", "r");
   if (!configFile) {
@@ -228,29 +292,6 @@ bool defConfig() {
   return true;
 }
 
-//====================paused===================
-
-
-// void secondDisplay() {
-//   display.clear();
-//   display.setFont(ArialMT_Plain_16);
-//   display.setTextAlignment(TEXT_ALIGN_CENTER);
-//   display.drawString(0, 30, timeClient.getFormattedTime());
-  
-//   display.drawRect(0,18,128,53); //frame
-// /*
-// 128/12=10px
-// 128x32 resolution
-// 32-19=13px for graph 
-// */
-//   int x = 0;
-//   for (int i=0;i<12;++i){
-//     display.drawLine(x+i*10, y[x], x+i*10+10, y[x]);
-//   }
-
-// }
-
-//===================WELL DONE=======================
 void mainScreen() {
   display.clear();
   
@@ -288,7 +329,6 @@ void mainScreen() {
   }
   display.display();
 }
-
 void displayStatus(int state){
   display.clear();
   if (state == 0) {
