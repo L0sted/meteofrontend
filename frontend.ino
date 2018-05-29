@@ -17,11 +17,11 @@ bool mqttAvail;
 
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP);
-SSD1306Brzo display(0x3C, 4, 5); //oled display w/ address 0x3C with SDA on GPIO4 and SCL on GPIO5 //address == offset
+SSD1306Brzo display(0x3C, 5, 4); //oled display w/ address 0x3C with SDA on GPIO4 and SCL on GPIO5 //address == offset
 
 WiFiClient client;
 ESP8266WebServer server(80);
-Adafruit_MQTT_Client mqtt(&client, "192.168.100.102", 1883);
+Adafruit_MQTT_Client mqtt(&client, "192.168.100.100", 1883);
 
 Adafruit_MQTT_Subscribe pressureFeed = Adafruit_MQTT_Subscribe(&mqtt, "pressure");
 Adafruit_MQTT_Subscribe inFeed = Adafruit_MQTT_Subscribe(&mqtt, "bmpTemp");
@@ -85,7 +85,7 @@ void loop(){
   }
   server.handleClient();
   MQTT_connect();//check connection and get packets for 0.5s
-  mqtt.processPackets(500);
+  mqtt.processPackets(300);
 
   mainScreen();//it could be cool and smooth if we could update screen independently, in some kind of separate thread or smthn similar
 
@@ -291,24 +291,22 @@ void mainScreen() {
 
 void displayStatus(int state){
   display.clear();
-  if (state == 0) {
-    display.setFont(ArialMT_Plain_16);
-    display.setTextAlignment(TEXT_ALIGN_CENTER);
+  display.setFont(ArialMT_Plain_16);
+  display.setTextAlignment(TEXT_ALIGN_CENTER);
+
+  switch (state) {
+  case 0: 
     display.drawString(64, 22, "Connected!");
-    
-  }
-  if (state == 1) {
-    display.setFont(ArialMT_Plain_16);
-    display.setTextAlignment(TEXT_ALIGN_CENTER);
+    break;
+  case 1:
     display.drawString(64, 22, "Connecting...");
-  }
-  if (state == 2) {
-    display.setFont(ArialMT_Plain_16);
-    display.setTextAlignment(TEXT_ALIGN_CENTER);
+    break;
+  case 2:
     display.drawString(64, 22, "Not connected!");
     display.setFont(ArialMT_Plain_10);
     display.setTextAlignment(TEXT_ALIGN_LEFT);
     display.drawString(0, 53, "we will die in 10s! :0");
+    break;
   }
   display.display();
 }
