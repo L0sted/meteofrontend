@@ -113,6 +113,7 @@ void setup(){
   mqtt.subscribe(&inFeed);
   mqtt.subscribe(&humidFeed);
   server.on("/edit", editConfig);
+  server.on("/notify", notify);
   server.begin();
 }
 
@@ -126,23 +127,85 @@ void loop(){
 
   mainScreen();//it could be cool and smooth if we could update screen independently, in some kind of separate thread or smthn similar
 
-  if ((timeClient.getHours()*60 + timeClient.getMinutes() - lastBeep > beepDelay)&&(!nightMode())){ //beep every $lastBeep
+  if ((timeClient.getHours()*60 + timeClient.getMinutes() - lastBeep >= beepDelay)&&(!nightMode())){ //beep every $lastBeep
     tone(15,1000);
     delay(100);
     noTone(15);
     lastBeep = timeClient.getHours()*60;
   }
-  notifyScreen("test msg");
-  delay(10000);
+  notifyCheck();
   updateNtp();//update time
 }
 
 
 
 //====================IN PROGRESS===================
-// void 
+bool notifyCheck(){
+  File notifyFile = SPIFFS.open("/notify.json", "r");
+  if (!notifyFile) {
+    Serial.println("Failed to open notify file");
+    return false;
+  }
 
+  size_t size = notifyFile.size();
+  if (size > 1024) {
+    Serial.println("Config file size is too large");
+    return false;
+  }
+
+  // Allocate a buffer to store contents of the file.
+  std::unique_ptr<char[]> buf(new char[size]);
+  // We don't use String here because ArduinoJson library requires the input buffer to be mutable. If you don't use ArduinoJson, you may as well use configFile.readString instead.
+  notifyFile.readBytes(buf.get(), size);
+  StaticJsonBuffer<200> jsonBuffer;
+  JsonObject& json = jsonBuffer.parseObject(buf.get());
+  if (!json.success()) {
+    Serial.println("Failed to parse config file");
+    return false;
+  }
+
+
+
+
+  return true;
+  notifyFile.close();
+  
+}
+
+bool testNotifySave() {
+  StaticJsonBuffer<200> jsonBuffer;
+  JsonObject& json = jsonBuffer.createObject();
+
+  json["text"] = "testNotifySave";//string
+  json["time"] = "960";//in minutes
+
+  File notifyFile = SPIFFS.open("/notify.json", "w");
+  if (!notifyFile) {
+    Serial.println("Failed to open notify file for writing");
+    return false;
+  }
+  json.printTo(notifyFile);
+  notifyFile.close();
+  return true;
+}
+
+void notify() {
+  if (server.args() > 0 ) { 
+    for ( uint8_t i = 0; i < server.args(); i++ ){
+      String Argument_Name = server.argName(i);
+      String client_response = server.arg(i);
+      if (Argument_Name == "text"){
+        server.send(200, "text/plain", "notify");
+        notifyScreen(client_response);
+      }
+    }
+  } else {
+    server.send(200, "text/plain", "to notify, goto " + String(WiFi.localIP()) + "/edit?text=value");
+  }
+  
+}
 void notifyScreen(String n_text) { //display func
+while (true) {
   display.clear();
   
   if (!nightMode()) { //turn off screen at night
@@ -167,18 +230,23 @@ void notifyScreen(String n_text) { //display func
     // display.setFont(ArialMT_Plain_10);
     // display.setTextAlignment(TEXT_ALIGN_RIGHT);
     // display.drawString(128, 53, "h:"+String(humid)+"%");
-    }
+    
 
     //beep beep!
+    tone(15,750);
+    delay(100);
+    noTone(15);    
+    tone(15,900);
+    delay(100);
+    noTone(15);
     tone(15,1000);
     delay(100);
     noTone(15);
-    delay(100);
-    tone(15,1000);
-    delay(100);
-    noTone(15);
-  
+
+    delay(3000);
+  }
   display.display();
+  }
 }
 
 //====================paused===================
@@ -274,7 +342,7 @@ bool readConfig() {
   onTime = int(json["onTime"]);
   beepDelay = int(json["beepDelay"]);
   return true;
-  
+  configFile.close();
 }
 bool defConfig() {
   StaticJsonBuffer<200> jsonBuffer;
@@ -287,8 +355,8 @@ bool defConfig() {
     Serial.println("Failed to open config file for writing");
     return false;
   }
-
   json.printTo(configFile);
+  configFile.close();
   return true;
 }
 
