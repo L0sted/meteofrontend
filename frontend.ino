@@ -89,7 +89,7 @@ void loop(){
 
   mainScreen();//it could be cool and smooth if we could update screen independently, in some kind of separate thread or smthn similar
 
-  if ((timeClient.getHours()*60 + timeClient.getMinutes() - lastBeep > beepDelay)&&(!nightMode())){ //beep every $lastBeep
+  if ((timeClient.getHours()*60 + timeClient.getMinutes() - lastBeep >= beepDelay)&&(!nightMode())){ //beep every $lastBeep
     tone(15,1000);
     delay(100);
     noTone(15);
