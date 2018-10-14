@@ -62,6 +62,9 @@ void loop(){
     lastBeep = timeClient.getHours()*60;
     netTasks();
   }
+  else {
+    delay(750);
+  }
 }
 //====================IN PROGRESS===================
 void netTasks() {
